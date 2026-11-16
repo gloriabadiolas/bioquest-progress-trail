@@ -10,33 +10,63 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ProgresoRouteImport } from './routes/progreso'
+import { Route as RepasoRouteImport } from './routes/repaso'
+import { Route as MisionIdRouteImport } from './routes/mision.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProgresoRoute = ProgresoRouteImport.update({
+  id: '/progreso',
+  path: '/progreso',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RepasoRoute = RepasoRouteImport.update({
+  id: '/repaso',
+  path: '/repaso',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MisionIdRoute = MisionIdRouteImport.update({
+  id: '/mision/$id',
+  path: '/mision/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/progreso': typeof ProgresoRoute
+  '/repaso': typeof RepasoRoute
+  '/mision/$id': typeof MisionIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/progreso': typeof ProgresoRoute
+  '/repaso': typeof RepasoRoute
+  '/mision/$id': typeof MisionIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/progreso': typeof ProgresoRoute
+  '/repaso': typeof RepasoRoute
+  '/mision/$id': typeof MisionIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/progreso' | '/repaso' | '/mision/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/progreso' | '/repaso' | '/mision/$id'
+  id: '__root__' | '/' | '/progreso' | '/repaso' | '/mision/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ProgresoRoute: typeof ProgresoRoute
+  RepasoRoute: typeof RepasoRoute
+  MisionIdRoute: typeof MisionIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +78,35 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/progreso': {
+      id: '/progreso'
+      path: '/progreso'
+      fullPath: '/progreso'
+      preLoaderRoute: typeof ProgresoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/repaso': {
+      id: '/repaso'
+      path: '/repaso'
+      fullPath: '/repaso'
+      preLoaderRoute: typeof RepasoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mision/$id': {
+      id: '/mision/$id'
+      path: '/mision/$id'
+      fullPath: '/mision/$id'
+      preLoaderRoute: typeof MisionIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ProgresoRoute: ProgresoRoute,
+  RepasoRoute: RepasoRoute,
+  MisionIdRoute: MisionIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
