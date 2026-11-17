@@ -1,14 +1,18 @@
-# Welcome to your Lovable project
+# Bioquest Progress Trail
+
+Creame una app de repaso del tema 2, es de biologia de 2 de la eso, haz ejercicios muy competenciales. Ponme los ejercicios de modo que pueda ver el progreso que llevo.
 
 This project was built with [Lovable](https://lovable.dev).
 
+**Live app**: https://bioquest-progress-trail.lovable.app
+
 ## Build with Lovable
 
-Open your project in the [Lovable editor](https://lovable.dev) and keep building.
+Continue developing this project in the [Lovable editor](https://lovable.dev/projects/de1cc019-4082-4437-b887-4e7b7fb177bb).
 
 - **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: connect the project to GitHub and every change made in Lovable is committed straight to your repository.
-- **Full ownership**: this code is yours. Push to your repository and your changes sync back into Lovable, ready for your next prompt.
+- **Stay in sync**: every change made in Lovable is committed straight to this repository.
+- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
 
 ## Development
 
@@ -20,10 +24,3 @@ cd <repository-name>
 npm i
 npm run dev
 ```
-
-## Built with
-
-- TanStack Start
-- TypeScript
-- React
-- Tailwind CSS
