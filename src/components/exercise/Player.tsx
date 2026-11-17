@@ -8,6 +8,7 @@ import { SKILL_LABELS, type Answer, type Exercise } from "@/lib/content/types";
 import { gradeExercise, isAnswerComplete, type GradeResult } from "@/lib/grading";
 import { exerciseStatus, medalFor, POINTS_FIRST_TRY, POINTS_LATER, progressStore } from "@/lib/progress";
 import { cn } from "@/lib/utils";
+import { theoryForExercise } from "@/lib/content/theory";
 import { ExerciseBody, initialAnswer } from "./ExerciseBody";
 
 type SessionResult = "first" | "later" | "failed";
@@ -32,6 +33,7 @@ export function Player({
   const [result, setResult] = useState<GradeResult | null>(null);
   const [checks, setChecks] = useState(0);
   const [reveal, setReveal] = useState(false);
+  const [hint, setHint] = useState(false);
   const [session, setSession] = useState<Record<string, SessionResult>>({});
   const [finished, setFinished] = useState(false);
   // Status before this visit, so the badge doesn't flip as soon as you answer.
@@ -45,6 +47,7 @@ export function Player({
     setResult(null);
     setChecks(0);
     setReveal(false);
+    setHint(false);
     setRecStatus(exerciseStatus(progressStore.getSnapshot().records[ex.id]));
   }, [ex]);
 
@@ -222,6 +225,27 @@ export function Player({
             </div>
           )}
           <h2 className="text-xl font-extrabold leading-snug sm:text-2xl">{ex.prompt}</h2>
+          <div>
+            <Button variant="popPaper" onClick={() => setHint((h) => !h)} aria-expanded={hint}>
+              <Lightbulb /> {hint ? "Ocultar pista" : "PISTA"}
+            </Button>
+            {hint && (
+              <div className="animate-pop-in mt-3 space-y-4 rounded-xl border-2 border-ink bg-gold/15 p-4">
+                {theoryForExercise(ex.id).map((sec) => (
+                  <div key={sec.title}>
+                    <p className="mb-1.5 flex items-center gap-2 font-display font-bold">
+                      <BookOpen className="size-4" /> Teoría: {sec.title}
+                    </p>
+                    <ul className="list-disc space-y-1 pl-5 text-[0.95rem] leading-relaxed">
+                      {sec.points.map((pt) => (
+                        <li key={pt}>{pt}</li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
 
           <ExerciseBody exercise={ex} answer={answer} onChange={setAnswer} locked={locked} reveal={reveal || !!result?.correct} />
         </div>
