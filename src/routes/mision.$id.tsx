@@ -16,7 +16,7 @@ export const Route = createFileRoute("/mision/$id")({
     meta: loaderData
       ? [
           { title: `Misión: ${loaderData.title} · Repaso Tema 2` },
-          { name: "description", content: `Ejercicios competenciales de ${loaderData.subtitle.toLowerCase()} (Biología 2.º ESO).` },
+          { name: "description", content: `Ejercicios competenciales de ${loaderData.subtitle.toLowerCase()} (Biología 3.º ESO).` },
           { property: "og:title", content: `Misión: ${loaderData.title} · Repaso Tema 2` },
           { property: "og:description", content: `Ejercicios competenciales de ${loaderData.subtitle.toLowerCase()}.` },
           { property: "og:type", content: "website" },

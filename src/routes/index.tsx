@@ -14,7 +14,7 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Repaso Tema 2 · Alimentación y nutrición · Biología 2.º ESO" },
+      { title: "Repaso Tema 2 · Alimentación y nutrición · Biología 3.º ESO" },
       {
         name: "description",
         content: "Seis misiones de ejercicios competenciales para repasar nutrientes, dietas, etiquetas y salud. Tu progreso se guarda solo.",
@@ -43,7 +43,7 @@ function Home() {
       <section className="surface grid overflow-hidden md:grid-cols-[1.1fr_1fr]">
         <div className="flex flex-col justify-center gap-5 p-6 sm:p-9">
           <span className="w-fit rounded-full border-2 border-ink bg-secondary px-3 py-1 text-xs font-bold uppercase tracking-wider">
-            Biología y Geología · 2.º ESO
+            Biología y Geología · 3.º ESO
           </span>
           <h1 className="text-4xl font-extrabold leading-[1.02] sm:text-5xl">
             Tema 2: <span className="text-primary">Alimentación</span> y{" "}
