@@ -132,39 +132,69 @@ export function exerciseStatus(rec: ExerciseRecord | undefined): "new" | "solved
   return rec.lastFirstCheckCorrect ? "solved" : "review";
 }
 
-/* ---------- Browser store (localStorage) ---------- */
+/** Combine two progress states (e.g. this device + the account). The most recent record per exercise wins. */
+export function mergeProgress(a: ProgressState, b: ProgressState): ProgressState {
+  const records: Record<string, ExerciseRecord> = { ...a.records };
+  for (const [id, rec] of Object.entries(b.records)) {
+    const cur = records[id];
+    if (!cur || rec.lastAt > cur.lastAt) records[id] = rec;
+  }
+  const studyDays = [...new Set([...a.studyDays, ...b.studyDays])].sort();
+  return { version: 1, records, studyDays };
+}
 
-const KEY = "repaso-tema2-biologia:v1";
+export function asProgressState(value: unknown): ProgressState {
+  const v = value as Partial<ProgressState> | null | undefined;
+  if (!v || v.version !== 1 || typeof v.records !== "object" || !Array.isArray(v.studyDays)) return EMPTY_PROGRESS;
+  return { version: 1, records: v.records ?? {}, studyDays: v.studyDays };
+}
+
+/* ---------- Browser store (localStorage, optionally mirrored to a student account) ---------- */
+
+const ANON_KEY = "repaso-tema2-biologia:v1";
+let storageKey = ANON_KEY;
+let pusher: ((state: ProgressState) => void) | null = null;
 let cache: ProgressState | null = null;
 const listeners = new Set<() => void>();
 
-function read(): ProgressState {
-  if (cache) return cache;
+function readLocal(key: string): ProgressState {
   try {
-    const raw = window.localStorage.getItem(KEY);
-    const parsed = raw ? (JSON.parse(raw) as ProgressState) : null;
-    cache = parsed && parsed.version === 1 ? parsed : EMPTY_PROGRESS;
+    const raw = window.localStorage.getItem(key);
+    return raw ? asProgressState(JSON.parse(raw)) : EMPTY_PROGRESS;
   } catch {
-    cache = EMPTY_PROGRESS;
+    return EMPTY_PROGRESS;
   }
+}
+
+function saveLocal(key: string, state: ProgressState) {
+  try {
+    window.localStorage.setItem(key, JSON.stringify(state));
+  } catch {
+    /* storage full or blocked: keep in memory */
+  }
+}
+
+function read(): ProgressState {
+  if (!cache) cache = readLocal(storageKey);
   return cache;
+}
+
+function notify() {
+  listeners.forEach((l) => l());
 }
 
 function write(next: ProgressState) {
   cache = next;
-  try {
-    window.localStorage.setItem(KEY, JSON.stringify(next));
-  } catch {
-    /* storage full or blocked: keep in memory */
-  }
-  listeners.forEach((l) => l());
+  saveLocal(storageKey, next);
+  pusher?.(next);
+  notify();
 }
 
 export const progressStore = {
   subscribe(listener: () => void) {
     listeners.add(listener);
     const onStorage = (e: StorageEvent) => {
-      if (e.key === KEY) {
+      if (e.key === storageKey) {
         cache = null;
         listener();
       }
@@ -182,5 +212,28 @@ export const progressStore = {
   },
   reset() {
     write(EMPTY_PROGRESS);
+  },
+  /** Switch to a student's account: merges what is saved online with this device's copy and mirrors every change. */
+  connectAccount(
+    userId: string,
+    remote: ProgressState,
+    push: (state: ProgressState) => void,
+    opts: { importAnonymous?: boolean } = {},
+  ): ProgressState {
+    storageKey = `${ANON_KEY}:user:${userId}`;
+    let merged = mergeProgress(readLocal(storageKey), remote);
+    if (opts.importAnonymous) merged = mergeProgress(merged, readLocal(ANON_KEY));
+    cache = merged;
+    saveLocal(storageKey, merged);
+    pusher = push;
+    notify();
+    return merged;
+  },
+  disconnectAccount() {
+    if (storageKey === ANON_KEY && !pusher) return;
+    storageKey = ANON_KEY;
+    pusher = null;
+    cache = null;
+    notify();
   },
 };
