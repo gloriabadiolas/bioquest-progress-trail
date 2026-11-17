@@ -13,6 +13,8 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { AppHeader } from "../components/AppHeader";
+import { Toaster } from "@/components/ui/sonner";
+import { startAccountSync } from "@/lib/account";
 
 function NotFoundComponent() {
   return (
@@ -131,6 +133,16 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const router = useRouter();
+  useEffect(
+    () =>
+      startAccountSync((event) => {
+        void router.invalidate();
+        if (event === "SIGNED_OUT") queryClient.clear();
+        else void queryClient.invalidateQueries();
+      }),
+    [router, queryClient],
+  );
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -139,6 +151,7 @@ function RootComponent() {
       <main className="mx-auto max-w-5xl px-4 pb-20 pt-6 sm:pt-10">
         <Outlet />
       </main>
+      <Toaster richColors position="top-center" />
     </QueryClientProvider>
   );
 }

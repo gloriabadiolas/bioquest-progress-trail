@@ -1,5 +1,8 @@
 import { Link } from "@tanstack/react-router";
-import { BarChart3, Home, RotateCcw } from "lucide-react";
+import { BarChart3, Home, LogIn, LogOut, RotateCcw, School } from "lucide-react";
+
+import { useAccount } from "@/hooks/use-account";
+import { signOut } from "@/lib/account";
 
 import { useProgress } from "@/hooks/use-progress";
 import { MISSIONS } from "@/lib/content/missions";
@@ -13,6 +16,7 @@ const activeClass = "bg-ink text-paper hover:bg-ink hover:text-paper";
 export function AppHeader() {
   const progress = useProgress();
   const pending = reviewList(MISSIONS, progress).length;
+  const account = useAccount();
   return (
     <header className="sticky top-0 z-30 border-b-2 border-ink bg-background/90 backdrop-blur">
       <div className="mx-auto flex max-w-5xl items-center justify-between gap-3 px-4 py-3">
@@ -37,6 +41,22 @@ export function AppHeader() {
           <Link to="/progreso" className={linkClass} activeProps={{ className: cn(linkClass, activeClass) }}>
             <BarChart3 className="size-4" /> <span className="hidden sm:inline">Mi progreso</span>
           </Link>
+          {(account.status === "teacher" || account.status === "user") && (
+            <Link to="/aula" className={linkClass} activeProps={{ className: cn(linkClass, activeClass) }}>
+              <School className="size-4" /> <span className="hidden sm:inline">Mi aula</span>
+            </Link>
+          )}
+          {account.status === "signed_out" && (
+            <Link to="/auth" className={linkClass}>
+              <LogIn className="size-4" /> <span className="hidden sm:inline">Entrar</span>
+            </Link>
+          )}
+          {account.status !== "signed_out" && account.status !== "loading" && (
+            <button type="button" onClick={() => void signOut()} className={linkClass} title="Cerrar sesión">
+              <LogOut className="size-4" />
+              <span className="hidden max-w-24 truncate md:inline">{account.status === "user" ? account.email : account.displayName}</span>
+            </button>
+          )}
         </nav>
       </div>
     </header>
