@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthRouteImport } from './routes/auth'
 import { Route as ProgresoRouteImport } from './routes/progreso'
 import { Route as RepasoRouteImport } from './routes/repaso'
 import { Route as MisionIdRouteImport } from './routes/mision.$id'
@@ -17,6 +18,11 @@ import { Route as MisionIdRouteImport } from './routes/mision.$id'
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ProgresoRoute = ProgresoRouteImport.update({
@@ -37,12 +43,14 @@ const MisionIdRoute = MisionIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
   '/progreso': typeof ProgresoRoute
   '/repaso': typeof RepasoRoute
   '/mision/$id': typeof MisionIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
   '/progreso': typeof ProgresoRoute
   '/repaso': typeof RepasoRoute
   '/mision/$id': typeof MisionIdRoute
@@ -50,20 +58,22 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
   '/progreso': typeof ProgresoRoute
   '/repaso': typeof RepasoRoute
   '/mision/$id': typeof MisionIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/progreso' | '/repaso' | '/mision/$id'
+  fullPaths: '/' | '/auth' | '/progreso' | '/repaso' | '/mision/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/progreso' | '/repaso' | '/mision/$id'
-  id: '__root__' | '/' | '/progreso' | '/repaso' | '/mision/$id'
+  to: '/' | '/auth' | '/progreso' | '/repaso' | '/mision/$id'
+  id: '__root__' | '/' | '/auth' | '/progreso' | '/repaso' | '/mision/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthRoute: typeof AuthRoute
   ProgresoRoute: typeof ProgresoRoute
   RepasoRoute: typeof RepasoRoute
   MisionIdRoute: typeof MisionIdRoute
@@ -76,6 +86,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/progreso': {
@@ -104,6 +121,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthRoute: AuthRoute,
   ProgresoRoute: ProgresoRoute,
   RepasoRoute: RepasoRoute,
   MisionIdRoute: MisionIdRoute,

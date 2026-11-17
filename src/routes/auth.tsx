@@ -39,7 +39,7 @@ function AuthPage() {
 
   useEffect(() => {
     if (account.status === "student") void navigate({ to: "/", replace: true });
-    if (account.status === "teacher" || account.status === "user") void navigate({ to: "/profe", replace: true });
+    if (account.status === "teacher" || account.status === "user") void navigate({ to: "/", replace: true });
   }, [account.status, navigate]);
 
   return (
