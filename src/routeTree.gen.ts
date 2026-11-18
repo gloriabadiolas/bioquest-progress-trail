@@ -12,8 +12,13 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AulaRouteImport } from './routes/aula'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as BiologiaRouteImport } from './routes/biologia'
+import { Route as FisicaQuimicaRouteImport } from './routes/fisica-quimica'
+import { Route as MatematicasRouteImport } from './routes/matematicas'
 import { Route as ProgresoRouteImport } from './routes/progreso'
 import { Route as RepasoRouteImport } from './routes/repaso'
+import { Route as BiologiaIndexRouteImport } from './routes/biologia.index'
+import { Route as BiologiaTema2RouteImport } from './routes/biologia.tema-2'
 import { Route as MisionIdRouteImport } from './routes/mision.$id'
 
 const IndexRoute = IndexRouteImport.update({
@@ -31,6 +36,21 @@ const AuthRoute = AuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BiologiaRoute = BiologiaRouteImport.update({
+  id: '/biologia',
+  path: '/biologia',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FisicaQuimicaRoute = FisicaQuimicaRouteImport.update({
+  id: '/fisica-quimica',
+  path: '/fisica-quimica',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MatematicasRoute = MatematicasRouteImport.update({
+  id: '/matematicas',
+  path: '/matematicas',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProgresoRoute = ProgresoRouteImport.update({
   id: '/progreso',
   path: '/progreso',
@@ -40,6 +60,16 @@ const RepasoRoute = RepasoRouteImport.update({
   id: '/repaso',
   path: '/repaso',
   getParentRoute: () => rootRouteImport,
+} as any)
+const BiologiaIndexRoute = BiologiaIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => BiologiaRoute,
+} as any)
+const BiologiaTema2Route = BiologiaTema2RouteImport.update({
+  id: '/tema-2',
+  path: '/tema-2',
+  getParentRoute: () => BiologiaRoute,
 } as any)
 const MisionIdRoute = MisionIdRouteImport.update({
   id: '/mision/$id',
@@ -51,46 +81,89 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/aula': typeof AulaRoute
   '/auth': typeof AuthRoute
+  '/biologia': typeof BiologiaRouteWithChildren
+  '/fisica-quimica': typeof FisicaQuimicaRoute
+  '/matematicas': typeof MatematicasRoute
   '/progreso': typeof ProgresoRoute
   '/repaso': typeof RepasoRoute
+  '/biologia/tema-2': typeof BiologiaTema2Route
   '/mision/$id': typeof MisionIdRoute
+  '/biologia/': typeof BiologiaIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/aula': typeof AulaRoute
   '/auth': typeof AuthRoute
+  '/fisica-quimica': typeof FisicaQuimicaRoute
+  '/matematicas': typeof MatematicasRoute
   '/progreso': typeof ProgresoRoute
   '/repaso': typeof RepasoRoute
+  '/biologia/tema-2': typeof BiologiaTema2Route
   '/mision/$id': typeof MisionIdRoute
+  '/biologia': typeof BiologiaIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/aula': typeof AulaRoute
   '/auth': typeof AuthRoute
+  '/biologia': typeof BiologiaRouteWithChildren
+  '/fisica-quimica': typeof FisicaQuimicaRoute
+  '/matematicas': typeof MatematicasRoute
   '/progreso': typeof ProgresoRoute
   '/repaso': typeof RepasoRoute
+  '/biologia/tema-2': typeof BiologiaTema2Route
   '/mision/$id': typeof MisionIdRoute
+  '/biologia/': typeof BiologiaIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/aula' | '/auth' | '/progreso' | '/repaso' | '/mision/$id'
+  fullPaths:
+    | '/'
+    | '/aula'
+    | '/auth'
+    | '/biologia'
+    | '/fisica-quimica'
+    | '/matematicas'
+    | '/progreso'
+    | '/repaso'
+    | '/biologia/tema-2'
+    | '/mision/$id'
+    | '/biologia/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/aula' | '/auth' | '/progreso' | '/repaso' | '/mision/$id'
+  to:
+    | '/'
+    | '/aula'
+    | '/auth'
+    | '/fisica-quimica'
+    | '/matematicas'
+    | '/progreso'
+    | '/repaso'
+    | '/biologia/tema-2'
+    | '/mision/$id'
+    | '/biologia'
   id:
     | '__root__'
     | '/'
     | '/aula'
     | '/auth'
+    | '/biologia'
+    | '/fisica-quimica'
+    | '/matematicas'
     | '/progreso'
     | '/repaso'
+    | '/biologia/tema-2'
     | '/mision/$id'
+    | '/biologia/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AulaRoute: typeof AulaRoute
   AuthRoute: typeof AuthRoute
+  BiologiaRoute: typeof BiologiaRouteWithChildren
+  FisicaQuimicaRoute: typeof FisicaQuimicaRoute
+  MatematicasRoute: typeof MatematicasRoute
   ProgresoRoute: typeof ProgresoRoute
   RepasoRoute: typeof RepasoRoute
   MisionIdRoute: typeof MisionIdRoute
@@ -119,6 +192,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/biologia': {
+      id: '/biologia'
+      path: '/biologia'
+      fullPath: '/biologia'
+      preLoaderRoute: typeof BiologiaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/fisica-quimica': {
+      id: '/fisica-quimica'
+      path: '/fisica-quimica'
+      fullPath: '/fisica-quimica'
+      preLoaderRoute: typeof FisicaQuimicaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/matematicas': {
+      id: '/matematicas'
+      path: '/matematicas'
+      fullPath: '/matematicas'
+      preLoaderRoute: typeof MatematicasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/progreso': {
       id: '/progreso'
       path: '/progreso'
@@ -133,6 +227,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RepasoRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/biologia/': {
+      id: '/biologia/'
+      path: '/'
+      fullPath: '/biologia/'
+      preLoaderRoute: typeof BiologiaIndexRouteImport
+      parentRoute: typeof BiologiaRoute
+    }
+    '/biologia/tema-2': {
+      id: '/biologia/tema-2'
+      path: '/tema-2'
+      fullPath: '/biologia/tema-2'
+      preLoaderRoute: typeof BiologiaTema2RouteImport
+      parentRoute: typeof BiologiaRoute
+    }
     '/mision/$id': {
       id: '/mision/$id'
       path: '/mision/$id'
@@ -143,10 +251,27 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface BiologiaRouteChildren {
+  BiologiaTema2Route: typeof BiologiaTema2Route
+  BiologiaIndexRoute: typeof BiologiaIndexRoute
+}
+
+const BiologiaRouteChildren: BiologiaRouteChildren = {
+  BiologiaTema2Route: BiologiaTema2Route,
+  BiologiaIndexRoute: BiologiaIndexRoute,
+}
+
+const BiologiaRouteWithChildren = BiologiaRoute._addFileChildren(
+  BiologiaRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AulaRoute: AulaRoute,
   AuthRoute: AuthRoute,
+  BiologiaRoute: BiologiaRouteWithChildren,
+  FisicaQuimicaRoute: FisicaQuimicaRoute,
+  MatematicasRoute: MatematicasRoute,
   ProgresoRoute: ProgresoRoute,
   RepasoRoute: RepasoRoute,
   MisionIdRoute: MisionIdRoute,

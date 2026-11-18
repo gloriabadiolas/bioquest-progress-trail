@@ -28,3 +28,6 @@ use the editor.
   own key and store it in Secrets.
 - **Secrets.** Lovable manages them. Do not put secret values in the repo.
 <!-- LOVABLE:END -->
+
+- Keep subject catalog pages separate from topic pages; preserve existing exercise IDs and progress storage when reorganizing navigation so saved student work remains available.
+- Subject routes with child topic pages render an Outlet and use an index route for the subject catalog to avoid duplicate content on topic pages.

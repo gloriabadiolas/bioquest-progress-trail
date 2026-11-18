@@ -123,7 +123,7 @@ export function Player({
             </Button>
           )}
           <Button asChild variant="pop" size="xl">
-            <Link to="/">
+            <Link to="/biologia/tema-2">
               Volver al mapa <ArrowRight />
             </Link>
           </Button>

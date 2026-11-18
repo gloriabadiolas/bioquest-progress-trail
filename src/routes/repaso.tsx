@@ -34,7 +34,7 @@ function ReviewPage() {
 
   return (
     <div className="mx-auto max-w-3xl space-y-6">
-      <Link to="/" className="inline-flex items-center gap-1 text-sm font-bold text-muted-foreground hover:text-ink">
+      <Link to="/biologia/tema-2" className="inline-flex items-center gap-1 text-sm font-bold text-muted-foreground hover:text-ink">
         <ArrowLeft className="size-4" /> Mapa de misiones
       </Link>
       <div className="flex items-center gap-4">
@@ -57,7 +57,7 @@ function ReviewPage() {
             Aquí aparecerán los ejercicios que falles a la primera, para que los repitas hasta dominarlos.
           </p>
           <Button asChild variant="pop" size="xl" className="mt-6">
-            <Link to="/">Ir a las misiones</Link>
+            <Link to="/biologia/tema-2">Ir a las misiones</Link>
           </Button>
         </div>
       ) : (

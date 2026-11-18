@@ -14,4 +14,18 @@ describe("App routing", () => {
 
     expect(matches.at(-1)?.routeId).not.toBe(rootRouteId);
   });
+
+  it.each(["/matematicas", "/fisica-quimica", "/biologia/"])("provides a subject page for %s", (path) => {
+    const router = createRouter({ routeTree, context: { queryClient: new QueryClient() } });
+    const matches = router.matchRoutes(path);
+    expect(matches.at(-1)?.pathname).toBe(path);
+    expect(matches.at(-1)?.routeId).not.toBe(rootRouteId);
+  });
+
+  it("places the existing topic under Biology", () => {
+    const router = createRouter({ routeTree, context: { queryClient: new QueryClient() } });
+    const matches = router.matchRoutes("/biologia/tema-2");
+    expect(matches.map((match) => match.routeId)).toContain("/biologia");
+    expect(matches.at(-1)?.routeId).toBe("/biologia/tema-2");
+  });
 });

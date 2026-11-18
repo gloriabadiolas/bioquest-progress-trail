@@ -37,12 +37,13 @@ export const Route = createFileRoute("/mision/$id")({
 
 function MissionPage() {
   const { missionId } = Route.useLoaderData();
-  const mission = getMission(missionId)!;
+  const mission = getMission(missionId);
   const [round, setRound] = useState(0);
+  if (!mission) return null;
 
   return (
     <div className="mx-auto max-w-3xl space-y-6">
-      <Link to="/" className="inline-flex items-center gap-1 text-sm font-bold text-muted-foreground hover:text-ink">
+      <Link to="/biologia/tema-2" className="inline-flex items-center gap-1 text-sm font-bold text-muted-foreground hover:text-ink">
         <ArrowLeft className="size-4" /> Mapa de misiones
       </Link>
       <div className="flex items-center gap-4">

@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { BarChart3, Home, LogIn, LogOut, RotateCcw, School } from "lucide-react";
+import { BarChart3, BookOpen, Home, LogIn, LogOut, RotateCcw, School } from "lucide-react";
 
 import { useAccount } from "@/hooks/use-account";
 import { signOut } from "@/lib/account";
@@ -22,15 +22,15 @@ export function AppHeader() {
       <div className="mx-auto flex max-w-5xl items-center justify-between gap-3 px-4 py-3">
         <Link to="/" className="flex items-center gap-2">
           <span className="grid size-9 place-items-center rounded-lg border-2 border-ink bg-accent font-display text-lg font-extrabold text-accent-foreground shadow-press">
-            2
+            <BookOpen className="size-5" />
           </span>
           <span className="hidden font-display text-lg font-extrabold leading-none sm:block">
-            Repaso Bio<span className="text-accent">.</span>
+            Repaso ESO<span className="text-accent">.</span>
           </span>
         </Link>
         <nav className="flex items-center gap-1">
           <Link to="/" className={linkClass} activeProps={{ className: cn(linkClass, activeClass) }} activeOptions={{ exact: true }}>
-            <Home className="size-4" /> <span className="hidden sm:inline">Inicio</span>
+            <Home className="size-4" /> <span className="hidden sm:inline">Asignaturas</span>
           </Link>
           <Link to="/repaso" className={linkClass} activeProps={{ className: cn(linkClass, activeClass) }}>
             <RotateCcw className="size-4" /> <span className="hidden sm:inline">Fallos</span>

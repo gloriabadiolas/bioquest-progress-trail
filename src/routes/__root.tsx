@@ -84,15 +84,15 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Repaso Bio · Tema 2 Alimentación y nutrición" },
+      { title: "Repaso ESO · Mis asignaturas" },
       {
         name: "description",
-        content: "Ejercicios competenciales de Biología 3.º ESO sobre alimentación y nutrición con seguimiento de progreso.",
+        content: "Matemáticas, Física y Química y Biología de 3.º ESO con seguimiento de progreso.",
       },
-      { property: "og:title", content: "Repaso Bio · Tema 2 Alimentación y nutrición" },
+      { property: "og:title", content: "Repaso ESO · Mis asignaturas" },
       {
         property: "og:description",
-        content: "Ejercicios competenciales de Biología 3.º ESO sobre alimentación y nutrición con seguimiento de progreso.",
+        content: "Matemáticas, Física y Química y Biología de 3.º ESO con seguimiento de progreso.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
