@@ -142,7 +142,10 @@ function ClassCard({ cls }: { cls: ClassRow }) {
     },
   });
   const list = students.data ?? [];
-  const avg = list.length ? Math.round(list.reduce((s, st) => s + statsFor(ALL_SUBJECT_EXERCISES, st.state).percent, 0) / list.length) : 0;
+  const [subjectId, setSubjectId] = useState("all");
+  const subject = SUBJECTS.find((x) => x.id === subjectId);
+  const exs = subject ? subject.exercises : ALL_SUBJECT_EXERCISES;
+  const avg = list.length ? Math.round(list.reduce((s, st) => s + statsFor(exs, st.state).percent, 0) / list.length) : 0;
 
   return (
     <section className="space-y-4 border-t-2 border-ink py-5">
@@ -164,24 +167,32 @@ function ClassCard({ cls }: { cls: ClassRow }) {
       <p className="text-sm text-muted-foreground">
         Tu alumnado entra en la app → <b>Entrar</b> → <b>Unirme a una clase</b> y escribe este código.
       </p>
+      <div className="flex flex-wrap gap-2" role="tablist" aria-label="Ver progreso por asignatura">
+        {[{ id: "all", name: "Todas" }, ...SUBJECTS].map((x) => (
+          <Button key={x.id} type="button" role="tab" aria-selected={subjectId === x.id} size="sm" variant={subjectId === x.id ? "default" : "outline"} onClick={() => setSubjectId(x.id)}>{x.name}</Button>
+        ))}
+      </div>
+      {subject && <p className="text-sm font-bold">{subject.name}: media de la clase {avg}% · {list.reduce((n, st) => n + statsFor(exs, st.state).attempted, 0)} ejercicios realizados en total{subject.exercises.length ? "" : " (sin temas todavía)"}</p>}
       {students.isLoading && <Loader2 className="size-5 animate-spin" />}
       {students.isError && <p role="alert" className="text-destructive">No se pudo cargar el progreso del alumnado.</p>}
       {list.length > 0 && (
         <div className="divide-y-2 divide-border rounded-xl border-2 border-ink">
-          {list.map((s) => <StudentRow key={s.id} s={s} classId={cls.id} />)}
+          {list.map((s) => <StudentRow key={s.id} s={s} classId={cls.id} subjectId={subjectId} />)}
         </div>
       )}
     </section>
   );
 }
 
-function StudentRow({ s, classId }: { s: Student; classId: string }) {
+function StudentRow({ s, classId, subjectId }: { s: Student; classId: string; subjectId: string }) {
+  const shown = SUBJECTS.filter((x) => subjectId === "all" || x.id === subjectId);
+  const exs = subjectId === "all" ? ALL_SUBJECT_EXERCISES : shown.flatMap((x) => x.exercises);
   const [open, setOpen] = useState(false);
   const qc = useQueryClient();
   const setPwd = useServerFn(setStudentPassword);
   const del = useServerFn(deleteStudent);
-  const st = statsFor(ALL_SUBJECT_EXERCISES, s.state);
-  const pending = ALL_SUBJECT_EXERCISES.filter((ex) => s.state.records[ex.id] && !s.state.records[ex.id]?.lastFirstCheckCorrect).length;
+  const st = statsFor(exs, s.state);
+  const pending = exs.filter((ex) => s.state.records[ex.id] && !s.state.records[ex.id]?.lastFirstCheckCorrect).length;
 
   const resetPassword = async () => {
     const pwd = window.prompt(`Nueva contraseña para ${s.name} (mínimo ${MIN_PASSWORD} caracteres):`);
@@ -213,7 +224,7 @@ function StudentRow({ s, classId }: { s: Student; classId: string }) {
       {open && (
         <div className="space-y-3 bg-muted/40 p-3">
           <div className="grid gap-6 lg:grid-cols-3">
-            {SUBJECTS.map((subject) => <SubjectProgress key={subject.id} subject={subject} state={s.state} />)}
+            {shown.map((subject) => <SubjectProgress key={subject.id} subject={subject} state={s.state} />)}
           </div>
           <p className="text-xs text-muted-foreground">
             Acierto a la primera: {st.accuracy}% · Última actividad: {s.updatedAt && st.attempted ? new Date(s.updatedAt).toLocaleString("es-ES") : "todavía no ha practicado"}
