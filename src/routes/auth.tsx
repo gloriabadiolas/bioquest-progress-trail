@@ -22,9 +22,9 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
-      { title: "Entrar · Repaso Bio Tema 2" },
+      { title: "Entrar en clase · Repaso ESO" },
       { name: "description", content: "Entra con el código de tu clase para guardar tu progreso en tu cuenta, o accede al panel de la profesora." },
-      { property: "og:title", content: "Entrar · Repaso Bio Tema 2" },
+      { property: "og:title", content: "Entrar en clase · Repaso ESO" },
       { property: "og:description", content: "Entra con el código de tu clase y guarda tu progreso en cualquier dispositivo." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

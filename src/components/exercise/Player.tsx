@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { ArrowRight, BookOpen, Check, Eye, Lightbulb, PartyPopper, RotateCcw, X } from "lucide-react";
+import { ArrowRight, BookOpen, Check, Eye, Lightbulb, Loader2, PartyPopper, RotateCcw, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -11,6 +11,8 @@ import { cn } from "@/lib/utils";
 import { theoryForExercise } from "@/lib/content/theory";
 import type { TheorySection } from "@/lib/content/theory";
 import { ExerciseBody, initialAnswer } from "./ExerciseBody";
+import { useAccount } from "@/hooks/use-account";
+import { canPractice } from "@/lib/subject-progress";
 
 type SessionResult = "first" | "later" | "failed";
 
@@ -33,6 +35,7 @@ export function Player({
   returnTo?: "/biologia/tema-2" | "/matematicas/radicales";
   theory?: TheorySection[];
 }) {
+  const account = useAccount();
   const [index, setIndex] = useState(0);
   const [answer, setAnswer] = useState<Answer>(() => (exercises[0] ? initialAnswer(exercises[0]) : null));
   const [result, setResult] = useState<GradeResult | null>(null);
@@ -59,7 +62,7 @@ export function Player({
   const complete = ex ? isAnswerComplete(ex, answer) : false;
 
   const check = () => {
-    if (!ex || !complete) return;
+    if (!ex || !complete || !canPractice(account.status)) return;
     const r = gradeExercise(ex, answer);
     const firstCheck = checks === 0;
     progressStore.record(ex.id, r.score, firstCheck);
@@ -91,6 +94,15 @@ export function Player({
     };
   }, [session]);
 
+  if (account.status === "loading") return <Loader2 className="mx-auto size-8 animate-spin" aria-label="Cargando cuenta" />;
+  if (!canPractice(account.status)) return (
+    <div className="mx-auto max-w-md space-y-4 border-y border-border py-8 text-center">
+      <BookOpen className="mx-auto size-10 text-primary" />
+      <h2 className="text-2xl font-extrabold">Entra en tu clase</h2>
+      <p className="text-muted-foreground">Usa el código de tu clase, tu usuario y tu contraseña.</p>
+      <Button asChild variant="pop" size="xl"><Link to="/auth">Entrar en mi clase <ArrowRight /></Link></Button>
+    </div>
+  );
   if (!exercises.length) return null;
 
   if (finished) {

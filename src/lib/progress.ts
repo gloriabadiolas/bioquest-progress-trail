@@ -17,6 +17,16 @@ export interface ProgressState {
   records: Record<string, ExerciseRecord>;
   /** ISO dates (YYYY-MM-DD) with at least one answer checked. */
   studyDays: string[];
+  /** Answer history starts when account tracking is introduced; older records stay intact. */
+  history?: AttemptEvent[];
+}
+
+export interface AttemptEvent {
+  id: string;
+  exerciseId: string;
+  score: number;
+  firstCheck: boolean;
+  at: number;
 }
 
 export const EMPTY_PROGRESS: ProgressState = { version: 1, records: {}, studyDays: [] };
@@ -62,6 +72,7 @@ export function applyAttempt(
     ...state,
     records: { ...state.records, [exerciseId]: next },
     studyDays: state.studyDays.includes(day) ? state.studyDays : [...state.studyDays, day],
+    history: [...(state.history ?? []), { id: crypto.randomUUID(), exerciseId, score, firstCheck: isFirstCheckThisTime, at: now.getTime() }],
   };
 }
 
@@ -140,13 +151,14 @@ export function mergeProgress(a: ProgressState, b: ProgressState): ProgressState
     if (!cur || rec.lastAt > cur.lastAt) records[id] = rec;
   }
   const studyDays = [...new Set([...a.studyDays, ...b.studyDays])].sort();
-  return { version: 1, records, studyDays };
+  const history = [...new Map([...(a.history ?? []), ...(b.history ?? [])].map((event) => [event.id, event])).values()].sort((x, y) => x.at - y.at);
+  return { version: 1, records, studyDays, history };
 }
 
 export function asProgressState(value: unknown): ProgressState {
   const v = value as Partial<ProgressState> | null | undefined;
   if (!v || v.version !== 1 || typeof v.records !== "object" || !Array.isArray(v.studyDays)) return EMPTY_PROGRESS;
-  return { version: 1, records: v.records ?? {}, studyDays: v.studyDays };
+  return { version: 1, records: v.records ?? {}, studyDays: v.studyDays, history: Array.isArray(v.history) ? v.history : [] };
 }
 
 /* ---------- Browser store (localStorage, optionally mirrored to a student account) ---------- */

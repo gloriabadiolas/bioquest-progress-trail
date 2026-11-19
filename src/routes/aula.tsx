@@ -10,18 +10,19 @@ import { Input } from "@/components/ui/input";
 import { useAccount } from "@/hooks/use-account";
 import { supabase } from "@/integrations/supabase/client";
 import { refreshAccount } from "@/lib/account";
-import { MISSIONS, ALL_EXERCISES } from "@/lib/content/missions";
-import { asProgressState, reviewList, statsFor, type ProgressState } from "@/lib/progress";
+import { asProgressState, statsFor, type ProgressState } from "@/lib/progress";
+import { ALL_SUBJECT_EXERCISES, SUBJECTS } from "@/lib/subject-progress";
+import { SubjectProgress } from "@/components/SubjectProgress";
 import { generateClassCode, MIN_PASSWORD } from "@/lib/student-auth";
 import { deleteStudent, setStudentPassword } from "@/lib/teacher.functions";
 
 export const Route = createFileRoute("/aula")({
   head: () => ({
     meta: [
-      { title: "Mi aula · Repaso Bio Tema 2" },
+      { title: "Mi aula · Seguimiento por asignatura · Repaso ESO" },
       { name: "description", content: "Panel de la profesora: crea clases, comparte el código y sigue el progreso de cada alumno." },
-      { property: "og:title", content: "Mi aula · Repaso Bio Tema 2" },
-      { property: "og:description", content: "Crea tu clase y sigue el avance de tu alumnado en el tema de alimentación y nutrición." },
+      { property: "og:title", content: "Mi aula · Seguimiento por asignatura · Repaso ESO" },
+      { property: "og:description", content: "Ejercicios realizados y evolución de cada alumno en Matemáticas, Física y Química y Biología." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
@@ -107,6 +108,7 @@ function TeacherPanel({ teacherId, name }: { teacherId: string; name: string }) 
         </Button>
       </form>
       {classes.isLoading && <Loader2 className="mx-auto size-6 animate-spin" />}
+      {classes.isError && <p role="alert" className="text-destructive">No se pudieron cargar tus clases. Vuelve a intentarlo.</p>}
       {classes.data?.length === 0 && <p className="text-center text-muted-foreground">Aún no tienes clases. Crea la primera arriba.</p>}
       {classes.data?.map((c) => <ClassCard key={c.id} cls={c} />)}
     </div>
@@ -118,6 +120,7 @@ type Student = { id: string; name: string; username: string; state: ProgressStat
 function ClassCard({ cls }: { cls: ClassRow }) {
   const students = useQuery({
     queryKey: ["students", cls.id],
+    refetchInterval: 15000,
     queryFn: async (): Promise<Student[]> => {
       const { data: members, error } = await supabase.from("class_members").select("user_id").eq("class_id", cls.id);
       if (error) throw error;
@@ -127,6 +130,8 @@ function ClassCard({ cls }: { cls: ClassRow }) {
         supabase.from("profiles").select("id, display_name, username").in("id", ids),
         supabase.from("student_progress").select("user_id, state, updated_at").in("user_id", ids),
       ]);
+      if (profiles.error) throw profiles.error;
+      if (progress.error) throw progress.error;
       return ids
         .map((id) => {
           const p = profiles.data?.find((x) => x.id === id);
@@ -137,28 +142,30 @@ function ClassCard({ cls }: { cls: ClassRow }) {
     },
   });
   const list = students.data ?? [];
-  const avg = list.length ? Math.round(list.reduce((s, st) => s + statsFor(ALL_EXERCISES, st.state).percent, 0) / list.length) : 0;
+  const avg = list.length ? Math.round(list.reduce((s, st) => s + statsFor(ALL_SUBJECT_EXERCISES, st.state).percent, 0) / list.length) : 0;
 
   return (
-    <section className="surface space-y-4 p-5">
+    <section className="space-y-4 border-t-2 border-ink py-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h2 className="text-2xl font-extrabold">{cls.name}</h2>
           <p className="flex items-center gap-1 text-sm text-muted-foreground"><Users className="size-4" /> {list.length} alumnos · media {avg}% completado</p>
         </div>
-        <button
+        <Button
           type="button"
           onClick={() => { void navigator.clipboard.writeText(cls.code); toast.success("Código copiado"); }}
-          className="flex items-center gap-2 rounded-xl border-2 border-ink bg-accent px-4 py-2 font-mono text-xl font-extrabold tracking-widest text-accent-foreground shadow-press"
+          variant="popAccent"
+          className="font-mono text-xl font-extrabold"
           title="Copiar código"
         >
           {cls.code} <Copy className="size-4" />
-        </button>
+        </Button>
       </div>
       <p className="text-sm text-muted-foreground">
         Tu alumnado entra en la app → <b>Entrar</b> → <b>Unirme a una clase</b> y escribe este código.
       </p>
       {students.isLoading && <Loader2 className="size-5 animate-spin" />}
+      {students.isError && <p role="alert" className="text-destructive">No se pudo cargar el progreso del alumnado.</p>}
       {list.length > 0 && (
         <div className="divide-y-2 divide-border rounded-xl border-2 border-ink">
           {list.map((s) => <StudentRow key={s.id} s={s} classId={cls.id} />)}
@@ -173,8 +180,8 @@ function StudentRow({ s, classId }: { s: Student; classId: string }) {
   const qc = useQueryClient();
   const setPwd = useServerFn(setStudentPassword);
   const del = useServerFn(deleteStudent);
-  const st = statsFor(ALL_EXERCISES, s.state);
-  const pending = reviewList(MISSIONS, s.state).length;
+  const st = statsFor(ALL_SUBJECT_EXERCISES, s.state);
+  const pending = ALL_SUBJECT_EXERCISES.filter((ex) => s.state.records[ex.id] && !s.state.records[ex.id]?.lastFirstCheckCorrect).length;
 
   const resetPassword = async () => {
     const pwd = window.prompt(`Nueva contraseña para ${s.name} (mínimo ${MIN_PASSWORD} caracteres):`);
@@ -191,29 +198,22 @@ function StudentRow({ s, classId }: { s: Student; classId: string }) {
 
   return (
     <div>
-      <button type="button" onClick={() => setOpen(!open)} className="grid w-full grid-cols-[1fr_auto_auto] items-center gap-3 p-3 text-left hover:bg-muted">
-        <span>
+      <Button type="button" variant="ghost" aria-expanded={open} onClick={() => setOpen(!open)} className="grid h-auto w-full grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-3 whitespace-normal p-3 text-left">
+        <span className="min-w-0 break-words">
           <span className="block font-bold">{s.name}</span>
           <span className="text-xs text-muted-foreground">@{s.username} · {s.state.studyDays.length} días de estudio{pending ? ` · ${pending} por repasar` : ""}</span>
         </span>
         <span className="w-28">
-          <span className="block text-right text-sm font-bold">{st.percent}% · {st.points} pts</span>
+          <span className="block text-right text-sm font-bold">{st.attempted} realizados</span>
+          <span className="block text-right text-xs">{st.percent}% · {st.points} pts</span>
           <span className="mt-1 block h-2 overflow-hidden rounded-full bg-muted"><span className="block h-full bg-primary" style={{ width: `${st.percent}%` }} /></span>
         </span>
         <ChevronDown className={`size-4 transition-transform ${open ? "rotate-180" : ""}`} />
-      </button>
+      </Button>
       {open && (
         <div className="space-y-3 bg-muted/40 p-3">
-          <div className="grid gap-2 sm:grid-cols-2">
-            {MISSIONS.map((m) => {
-              const ms = statsFor(m.exercises, s.state);
-              return (
-                <div key={m.id} className="rounded-lg border bg-background p-2 text-sm">
-                  <div className="flex justify-between font-semibold"><span>{m.number}. {m.title}</span><span>{ms.solved}/{ms.total}</span></div>
-                  <span className="mt-1 block h-1.5 overflow-hidden rounded-full bg-muted"><span className="block h-full bg-success" style={{ width: `${ms.percent}%` }} /></span>
-                </div>
-              );
-            })}
+          <div className="grid gap-6 lg:grid-cols-3">
+            {SUBJECTS.map((subject) => <SubjectProgress key={subject.id} subject={subject} state={s.state} />)}
           </div>
           <p className="text-xs text-muted-foreground">
             Acierto a la primera: {st.accuracy}% · Última actividad: {s.updatedAt && st.attempted ? new Date(s.updatedAt).toLocaleString("es-ES") : "todavía no ha practicado"}

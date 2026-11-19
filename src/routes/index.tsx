@@ -4,6 +4,7 @@ import heroImg from "@/assets/mesa-mediterranea.jpg";
 import mathImage from "@/assets/matematicas.png.asset.json";
 import scienceImage from "@/assets/fisica-quimica.png.asset.json";
 import { Button } from "@/components/ui/button";
+import { useAccount } from "@/hooks/use-account";
 
 export const Route = createFileRoute("/")({
   head: () => ({ meta: [
@@ -18,12 +19,20 @@ export const Route = createFileRoute("/")({
 });
 
 function Home() {
+  const account = useAccount();
   return (
     <div className="space-y-8">
       <div className="border-b-2 border-ink pb-6">
         <p className="mb-2 text-sm font-bold text-muted-foreground">3.º ESO</p>
         <h1 className="text-4xl font-extrabold sm:text-5xl">Mis asignaturas</h1>
       </div>
+      {(account.status === "signed_out" || account.status === "user") && (
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-5">
+          <h2 className="text-xl font-bold">Entra en tu clase</h2>
+          <Button asChild variant="pop"><Link to="/auth">Entrar con mi clase <ArrowRight /></Link></Button>
+        </div>
+      )}
+      {account.status === "student" && <p className="font-semibold text-primary">{account.displayName} · {account.className}</p>}
       <section aria-label="Asignaturas" className="grid gap-5 md:grid-cols-3">
         <article className="surface flex flex-col overflow-hidden">
           <img src={mathImage.url} alt="Cuaderno de Matemáticas con raíces cuadradas, figuras geométricas, regla y compás" width={1536} height={1024} className="h-40 w-full border-b-2 border-ink object-cover" />

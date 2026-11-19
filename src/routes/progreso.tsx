@@ -22,14 +22,17 @@ import { SKILL_LABELS } from "@/lib/content/types";
 import { ALL_EXERCISES, MISSIONS } from "@/lib/content/missions";
 import { exerciseStatus, medalFor, progressStore, skillStats, statsFor } from "@/lib/progress";
 import { cn } from "@/lib/utils";
+import { SUBJECTS } from "@/lib/subject-progress";
+import { SubjectProgress } from "@/components/SubjectProgress";
+import { useAccount } from "@/hooks/use-account";
 
 export const Route = createFileRoute("/progreso")({
   head: () => ({
     meta: [
-      { title: "Mi progreso · Repaso Tema 2 Alimentación y nutrición" },
-      { name: "description", content: "Consulta tu avance por misión y por competencia en el Tema 2 de Biología." },
-      { property: "og:title", content: "Mi progreso · Repaso Tema 2" },
-      { property: "og:description", content: "Tu avance por misión y por competencia en el Tema 2 de Biología." },
+      { title: "Mi progreso por asignatura · Repaso ESO" },
+      { name: "description", content: "Ejercicios realizados, resultados y evolución en tus asignaturas de 3.º ESO." },
+      { property: "og:title", content: "Mi progreso por asignatura · Repaso ESO" },
+      { property: "og:description", content: "Tu avance en Matemáticas, Física y Química y Biología." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
@@ -39,6 +42,7 @@ export const Route = createFileRoute("/progreso")({
 
 function ProgressPage() {
   const progress = useProgress();
+  const account = useAccount();
   const hydrated = useHydrated();
   const overall = statsFor(ALL_EXERCISES, progress);
   const skills = skillStats(MISSIONS, progress);
@@ -50,11 +54,16 @@ function ProgressPage() {
     <div className="space-y-8">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Tema 2 · Alimentación y nutrición</p>
+          <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">3.º ESO · Todas las asignaturas</p>
           <h1 className="text-4xl font-extrabold">Mi progreso</h1>
         </div>
-        <ResetButton />
+        {account.status !== "student" && <ResetButton />}
       </div>
+
+      <section className="grid gap-6 border-b border-border pb-8 lg:grid-cols-3" aria-label="Progreso por asignatura">
+        {SUBJECTS.map((subject) => <SubjectProgress key={subject.id} subject={subject} state={progress} />)}
+      </section>
+      <h2 className="text-2xl font-extrabold">Biología · Alimentación y nutrición</h2>
 
       <section className="grid gap-4 md:grid-cols-3">
         <Summary label="Ejercicios resueltos" value={`${overall.solved}/${overall.total}`} bar={overall.percent} />

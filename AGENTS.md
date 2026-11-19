@@ -33,3 +33,5 @@ use the editor.
 - Subject routes with child topic pages render an Outlet and use an index route for the subject catalog to avoid duplicate content on topic pages.
 - Math topics use namespaced exercise IDs with the shared progress store and pass topic-specific theory and return destinations to Player, keeping Biology content and statistics isolated.
 - Header branding uses CDN asset pointers in a separate identity row above navigation so school and teacher imagery stay visible without crowding mobile controls.
+- Use a shared subject registry for student and teacher summaries; retain version-1 progress records and add optional deduplicated attempt history so existing work survives and daily improvement can be measured.
+- Require a loaded class-student or teacher account before Player accepts answers; subject catalogs remain public so students can browse before joining their class.
