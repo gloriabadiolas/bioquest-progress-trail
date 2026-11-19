@@ -1,5 +1,7 @@
 import { Link } from "@tanstack/react-router";
-import { BarChart3, BookOpen, Home, LogIn, LogOut, RotateCcw, School } from "lucide-react";
+import { BarChart3, Home, LogIn, LogOut, RotateCcw, School } from "lucide-react";
+import schoolLogo from "@/assets/colegio-logo.png.asset.json";
+import teacherImage from "@/assets/profesora-ciencias.png.asset.json";
 
 import { useAccount } from "@/hooks/use-account";
 import { signOut } from "@/lib/account";
@@ -19,16 +21,20 @@ export function AppHeader() {
   const account = useAccount();
   return (
     <header className="sticky top-0 z-30 border-b-2 border-ink bg-background/90 backdrop-blur">
-      <div className="mx-auto flex max-w-5xl items-center justify-between gap-3 px-4 py-3">
-        <Link to="/" className="flex items-center gap-2">
-          <span className="grid size-9 place-items-center rounded-lg border-2 border-ink bg-accent font-display text-lg font-extrabold text-accent-foreground shadow-press">
-            <BookOpen className="size-5" />
-          </span>
-          <span className="hidden font-display text-lg font-extrabold leading-none sm:block">
-            Repaso ESO<span className="text-accent">.</span>
-          </span>
+      <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-4 py-3">
+        <Link to="/" className="min-w-0 max-w-[55%]" aria-label="Colegio Sagrado Corazón de Jesús · Inicio">
+          <img src={schoolLogo.url} alt="Colegio Sagrado Corazón de Jesús · Fundación Educere" width={407} height={60} className="h-auto w-full max-w-[407px] object-contain" />
         </Link>
-        <nav className="flex items-center gap-1">
+        <div className="flex min-w-0 items-center justify-end gap-3">
+          <div className="max-w-40 text-right sm:max-w-56">
+            <p className="font-display text-base font-bold sm:text-lg">Gloria</p>
+            <p className="text-[0.65rem] leading-snug text-muted-foreground sm:text-xs">Profesora del ámbito científico-tecnológico</p>
+          </div>
+          <img src={teacherImage.url} alt="Gloria, profesora del ámbito científico-tecnológico" width={768} height={768} className="size-14 shrink-0 rounded-lg border border-border object-cover sm:size-20" />
+        </div>
+      </div>
+      <div className="border-t border-border">
+        <nav aria-label="Navegación principal" className="mx-auto flex max-w-5xl flex-wrap items-center justify-end gap-1 px-4 py-2">
           <Link to="/" className={linkClass} activeProps={{ className: cn(linkClass, activeClass) }} activeOptions={{ exact: true }}>
             <Home className="size-4" /> <span className="hidden sm:inline">Asignaturas</span>
           </Link>

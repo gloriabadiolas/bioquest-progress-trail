@@ -1,6 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, Atom, BookOpen, Calculator, Leaf } from "lucide-react";
+import { ArrowRight, BookOpen, Leaf } from "lucide-react";
 import heroImg from "@/assets/mesa-mediterranea.jpg";
+import mathImage from "@/assets/matematicas.png.asset.json";
+import scienceImage from "@/assets/fisica-quimica.png.asset.json";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/")({
@@ -24,7 +26,7 @@ function Home() {
       </div>
       <section aria-label="Asignaturas" className="grid gap-5 md:grid-cols-3">
         <article className="surface flex flex-col overflow-hidden">
-          <div className="flex h-40 items-center justify-center border-b-2 border-ink bg-secondary"><Calculator className="size-20" strokeWidth={1.5} /></div>
+          <img src={mathImage.url} alt="Cuaderno de Matemáticas con raíces cuadradas, figuras geométricas, regla y compás" width={1536} height={1024} className="h-40 w-full border-b-2 border-ink object-cover" />
           <div className="flex flex-1 flex-col items-start gap-4 p-5">
             <h2 className="text-2xl font-extrabold">Matemáticas</h2>
             <p className="text-sm text-muted-foreground">1 tema · Radicales</p>
@@ -32,7 +34,7 @@ function Home() {
           </div>
         </article>
         <article className="surface flex flex-col overflow-hidden">
-          <div className="flex h-40 items-center justify-center border-b-2 border-ink bg-accent-soft"><Atom className="size-20" strokeWidth={1.5} /></div>
+          <img src={scienceImage.url} alt="Laboratorio de Física y Química con matraces, tubos de ensayo, modelo molecular y circuito eléctrico" width={1536} height={1024} className="h-40 w-full border-b-2 border-ink object-cover" />
           <div className="flex flex-1 flex-col items-start gap-4 p-5">
             <h2 className="text-2xl font-extrabold">Física y Química</h2>
             <p className="text-sm text-muted-foreground">Sin temas todavía</p>

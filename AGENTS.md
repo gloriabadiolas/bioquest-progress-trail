@@ -32,3 +32,4 @@ use the editor.
 - Keep subject catalog pages separate from topic pages; preserve existing exercise IDs and progress storage when reorganizing navigation so saved student work remains available.
 - Subject routes with child topic pages render an Outlet and use an index route for the subject catalog to avoid duplicate content on topic pages.
 - Math topics use namespaced exercise IDs with the shared progress store and pass topic-specific theory and return destinations to Player, keeping Biology content and statistics isolated.
+- Header branding uses CDN asset pointers in a separate identity row above navigation so school and teacher imagery stay visible without crowding mobile controls.
