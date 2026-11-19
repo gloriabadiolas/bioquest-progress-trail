@@ -6,7 +6,7 @@ import { asProgressState, progressStore, type ProgressState } from "@/lib/progre
 export type Account =
   | { status: "loading" }
   | { status: "signed_out" }
-  | { status: "student"; userId: string; displayName: string; username: string; className: string }
+  | { status: "student"; userId: string; displayName: string; username: string; className: string; avatarPath: string | null }
   | { status: "teacher"; userId: string; displayName: string; email: string }
   | { status: "user"; userId: string; email: string };
 
@@ -31,6 +31,10 @@ export const accountStore = {
   getSnapshot: () => account,
   getServerSnapshot: () => LOADING,
 };
+
+export function setStudentAvatar(userId: string, avatarPath: string) {
+  if (account.status === "student" && account.userId === userId) set({ ...account, avatarPath });
+}
 
 /* ---- progress mirroring for students ---- */
 
@@ -65,7 +69,7 @@ async function load(user: User) {
   const [roles, membership, profile] = await Promise.all([
     supabase.from("user_roles").select("role").eq("user_id", user.id),
     supabase.from("class_members").select("class_id, classes(name)").eq("user_id", user.id).maybeSingle(),
-    supabase.from("profiles").select("display_name, username").eq("id", user.id).maybeSingle(),
+    supabase.from("profiles").select("display_name, username, avatar_path").eq("id", user.id).maybeSingle(),
   ]);
   if (loadedFor !== user.id) return;
   const displayName = profile.data?.display_name || user.email || "";
@@ -89,6 +93,7 @@ async function load(user: User) {
       userId: user.id,
       displayName,
       username: profile.data?.username ?? "",
+      avatarPath: profile.data?.avatar_path ?? null,
       className: (Array.isArray(cls) ? cls[0]?.name : cls?.name) ?? "",
     });
     return;

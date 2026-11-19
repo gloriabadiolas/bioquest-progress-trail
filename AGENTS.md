@@ -35,3 +35,4 @@ use the editor.
 - Header branding uses CDN asset pointers in a separate identity row above navigation so school and teacher imagery stay visible without crowding mobile controls.
 - Use a shared subject registry for student and teacher summaries; retain version-1 progress records and add optional deduplicated attempt history so existing work survives and daily improvement can be measured.
 - Require a loaded class-student or teacher account before Player accepts answers; subject catalogs remain public so students can browse before joining their class.
+- Store student avatars in a private account-scoped bucket, re-encode uploads in the browser to remove original metadata, and display short-lived signed URLs only to their owner or class teacher; this protects student photos without changing progress storage.

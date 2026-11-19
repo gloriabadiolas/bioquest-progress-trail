@@ -1,5 +1,10 @@
 # Roadmap
 
+## Avatares del alumnado
+- [x] Pedir imagen de perfil y permitir subirla o cambiarla junto al progreso
+- [x] Mostrar avatares en el aula con acceso privado
+- [x] Comprobar subida, persistencia y permisos
+
 ## Seguimiento por asignatura
 - [x] Pedir acceso a la clase antes de responder y conservar los avances existentes
 - [x] Mostrar ejercicios realizados y evolución por alumno y asignatura

@@ -8,6 +8,20 @@
       "when": 1794893164913,
       "tag": "0000_migration",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1795076093618,
+      "tag": "0001_student_private_avatars",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1795076274925,
+      "tag": "0002_qualify_teacher_avatar_policy",
+      "breakpoints": true
     }
   ]
 }

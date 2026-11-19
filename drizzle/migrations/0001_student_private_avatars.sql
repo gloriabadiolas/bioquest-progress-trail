@@ -1,0 +1,6 @@
+ALTER TABLE public.profiles ADD COLUMN avatar_path text;
+ALTER TABLE public.profiles ADD CONSTRAINT own_avatar_path CHECK (avatar_path IS NULL OR avatar_path LIKE id::text || '/%');
+CREATE POLICY "Students read own avatars" ON storage.objects FOR SELECT TO authenticated USING (bucket_id = 'student-avatars' AND (storage.foldername(name))[1] = auth.uid()::text);
+CREATE POLICY "Class teachers read student avatars" ON storage.objects FOR SELECT TO authenticated USING (bucket_id = 'student-avatars' AND public.has_role(auth.uid(), 'teacher') AND EXISTS (SELECT 1 FROM public.class_members cm JOIN public.classes c ON c.id = cm.class_id WHERE cm.user_id::text = (storage.foldername(name))[1] AND c.teacher_id = auth.uid()));
+CREATE POLICY "Students upload own avatars" ON storage.objects FOR INSERT TO authenticated WITH CHECK (bucket_id = 'student-avatars' AND (storage.foldername(name))[1] = auth.uid()::text AND EXISTS (SELECT 1 FROM public.class_members WHERE user_id = auth.uid()));
+CREATE POLICY "Students delete own avatars" ON storage.objects FOR DELETE TO authenticated USING (bucket_id = 'student-avatars' AND (storage.foldername(name))[1] = auth.uid()::text);

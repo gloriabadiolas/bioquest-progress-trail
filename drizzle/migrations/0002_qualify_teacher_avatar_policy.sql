@@ -1,0 +1,1 @@
+ALTER POLICY "Class teachers read student avatars" ON storage.objects USING (bucket_id = 'student-avatars' AND public.has_role(auth.uid(), 'teacher') AND EXISTS (SELECT 1 FROM public.class_members cm JOIN public.classes c ON c.id = cm.class_id WHERE cm.user_id::text = (storage.foldername(storage.objects.name))[1] AND c.teacher_id = auth.uid()));

@@ -15,6 +15,7 @@ import { ALL_SUBJECT_EXERCISES, SUBJECTS } from "@/lib/subject-progress";
 import { SubjectProgress } from "@/components/SubjectProgress";
 import { generateClassCode, MIN_PASSWORD } from "@/lib/student-auth";
 import { deleteStudent, setStudentPassword } from "@/lib/teacher.functions";
+import { StudentAvatar } from "@/components/StudentAvatar";
 
 export const Route = createFileRoute("/aula")({
   head: () => ({
@@ -115,7 +116,7 @@ function TeacherPanel({ teacherId, name }: { teacherId: string; name: string }) 
   );
 }
 
-type Student = { id: string; name: string; username: string; state: ProgressState; updatedAt: string | null };
+type Student = { id: string; name: string; username: string; avatarPath: string | null; state: ProgressState; updatedAt: string | null };
 
 function ClassCard({ cls }: { cls: ClassRow }) {
   const students = useQuery({
@@ -127,7 +128,7 @@ function ClassCard({ cls }: { cls: ClassRow }) {
       const ids = members.map((m) => m.user_id);
       if (!ids.length) return [];
       const [profiles, progress] = await Promise.all([
-        supabase.from("profiles").select("id, display_name, username").in("id", ids),
+        supabase.from("profiles").select("id, display_name, username, avatar_path").in("id", ids),
         supabase.from("student_progress").select("user_id, state, updated_at").in("user_id", ids),
       ]);
       if (profiles.error) throw profiles.error;
@@ -136,7 +137,7 @@ function ClassCard({ cls }: { cls: ClassRow }) {
         .map((id) => {
           const p = profiles.data?.find((x) => x.id === id);
           const g = progress.data?.find((x) => x.user_id === id);
-          return { id, name: p?.display_name || "Sin nombre", username: p?.username ?? "", state: asProgressState(g?.state), updatedAt: g?.updated_at ?? null };
+          return { id, name: p?.display_name || "Sin nombre", username: p?.username ?? "", avatarPath: p?.avatar_path ?? null, state: asProgressState(g?.state), updatedAt: g?.updated_at ?? null };
         })
         .sort((a, b) => a.name.localeCompare(b.name, "es"));
     },
@@ -210,9 +211,12 @@ function StudentRow({ s, classId, subjectId }: { s: Student; classId: string; su
   return (
     <div>
       <Button type="button" variant="ghost" aria-expanded={open} onClick={() => setOpen(!open)} className="grid h-auto w-full grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-3 whitespace-normal p-3 text-left">
-        <span className="min-w-0 break-words">
+        <span className="flex min-w-0 items-center gap-3">
+          <StudentAvatar path={s.avatarPath} name={s.name} className="size-10 sm:size-12" />
+          <span className="min-w-0 break-words">
           <span className="block font-bold">{s.name}</span>
           <span className="text-xs text-muted-foreground">@{s.username} · {s.state.studyDays.length} días de estudio{pending ? ` · ${pending} por repasar` : ""}</span>
+          </span>
         </span>
         <span className="w-28">
           <span className="block text-right text-sm font-bold">{st.attempted} realizados</span>

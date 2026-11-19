@@ -15,6 +15,7 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { AppHeader } from "../components/AppHeader";
 import { Toaster } from "@/components/ui/sonner";
 import { startAccountSync } from "@/lib/account";
+import { StudentAvatarPrompt } from "@/components/StudentAvatar";
 
 function NotFoundComponent() {
   return (
@@ -148,6 +149,7 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <AppHeader />
+      <StudentAvatarPrompt />
       <main className="mx-auto max-w-5xl px-4 pb-20 pt-6 sm:pt-10">
         <Outlet />
       </main>

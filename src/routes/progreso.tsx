@@ -25,6 +25,7 @@ import { cn } from "@/lib/utils";
 import { SUBJECTS } from "@/lib/subject-progress";
 import { SubjectProgress } from "@/components/SubjectProgress";
 import { useAccount } from "@/hooks/use-account";
+import { StudentAvatarEditor } from "@/components/StudentAvatar";
 
 export const Route = createFileRoute("/progreso")({
   head: () => ({
@@ -60,6 +61,7 @@ function ProgressPage() {
         {account.status !== "student" && <ResetButton />}
       </div>
 
+      <StudentAvatarEditor />
       <section className="grid gap-6 border-b border-border pb-8 lg:grid-cols-3" aria-label="Progreso por asignatura">
         {SUBJECTS.map((subject) => <SubjectProgress key={subject.id} subject={subject} state={progress} />)}
       </section>
