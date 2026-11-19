@@ -49,13 +49,19 @@ export function Player({
 
   const ex = exercises[index];
 
-  useEffect(() => {
-    if (!ex) return;
-    setAnswer(initialAnswer(ex));
+  // Reset per-exercise state during render so a new exercise never sees the previous answer shape.
+  const [shownEx, setShownEx] = useState(ex);
+  if (ex !== shownEx) {
+    setShownEx(ex);
+    setAnswer(ex ? initialAnswer(ex) : null);
     setResult(null);
     setChecks(0);
     setReveal(false);
     setHint(false);
+  }
+
+  useEffect(() => {
+    if (!ex) return;
     setRecStatus(exerciseStatus(progressStore.getSnapshot().records[ex.id]));
   }, [ex]);
 
