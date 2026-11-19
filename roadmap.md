@@ -1,5 +1,10 @@
 # Roadmap
 
+## Radicales
+- [x] Apartado en Matemáticas con cuadrados perfectos, raíces a potencias, multiplicación y división del mismo índice
+- [x] Pistas matemáticas y progreso por apartado
+- [x] Comprobar respuestas, navegación y guardado del progreso
+
 ## Organización por asignaturas
 - [x] Inicio con Matemáticas, Física y Química y Biología
 - [x] Tema 2 dentro de Biología, conservando ejercicios y progreso

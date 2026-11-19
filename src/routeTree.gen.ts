@@ -19,7 +19,11 @@ import { Route as ProgresoRouteImport } from './routes/progreso'
 import { Route as RepasoRouteImport } from './routes/repaso'
 import { Route as BiologiaIndexRouteImport } from './routes/biologia.index'
 import { Route as BiologiaTema2RouteImport } from './routes/biologia.tema-2'
+import { Route as MatematicasIndexRouteImport } from './routes/matematicas.index'
+import { Route as MatematicasRadicalesRouteImport } from './routes/matematicas.radicales'
 import { Route as MisionIdRouteImport } from './routes/mision.$id'
+import { Route as MatematicasRadicalesIndexRouteImport } from './routes/matematicas.radicales.index'
+import { Route as MatematicasRadicalesApartadoRouteImport } from './routes/matematicas.radicales.$apartado'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -71,11 +75,33 @@ const BiologiaTema2Route = BiologiaTema2RouteImport.update({
   path: '/tema-2',
   getParentRoute: () => BiologiaRoute,
 } as any)
+const MatematicasIndexRoute = MatematicasIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => MatematicasRoute,
+} as any)
+const MatematicasRadicalesRoute = MatematicasRadicalesRouteImport.update({
+  id: '/radicales',
+  path: '/radicales',
+  getParentRoute: () => MatematicasRoute,
+} as any)
 const MisionIdRoute = MisionIdRouteImport.update({
   id: '/mision/$id',
   path: '/mision/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MatematicasRadicalesIndexRoute =
+  MatematicasRadicalesIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => MatematicasRadicalesRoute,
+  } as any)
+const MatematicasRadicalesApartadoRoute =
+  MatematicasRadicalesApartadoRouteImport.update({
+    id: '/$apartado',
+    path: '/$apartado',
+    getParentRoute: () => MatematicasRadicalesRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -83,24 +109,30 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/biologia': typeof BiologiaRouteWithChildren
   '/fisica-quimica': typeof FisicaQuimicaRoute
-  '/matematicas': typeof MatematicasRoute
+  '/matematicas': typeof MatematicasRouteWithChildren
   '/progreso': typeof ProgresoRoute
   '/repaso': typeof RepasoRoute
   '/biologia/tema-2': typeof BiologiaTema2Route
+  '/matematicas/radicales': typeof MatematicasRadicalesRouteWithChildren
   '/mision/$id': typeof MisionIdRoute
   '/biologia/': typeof BiologiaIndexRoute
+  '/matematicas/': typeof MatematicasIndexRoute
+  '/matematicas/radicales/$apartado': typeof MatematicasRadicalesApartadoRoute
+  '/matematicas/radicales/': typeof MatematicasRadicalesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/aula': typeof AulaRoute
   '/auth': typeof AuthRoute
   '/fisica-quimica': typeof FisicaQuimicaRoute
-  '/matematicas': typeof MatematicasRoute
   '/progreso': typeof ProgresoRoute
   '/repaso': typeof RepasoRoute
   '/biologia/tema-2': typeof BiologiaTema2Route
   '/mision/$id': typeof MisionIdRoute
   '/biologia': typeof BiologiaIndexRoute
+  '/matematicas': typeof MatematicasIndexRoute
+  '/matematicas/radicales/$apartado': typeof MatematicasRadicalesApartadoRoute
+  '/matematicas/radicales': typeof MatematicasRadicalesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -109,12 +141,16 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/biologia': typeof BiologiaRouteWithChildren
   '/fisica-quimica': typeof FisicaQuimicaRoute
-  '/matematicas': typeof MatematicasRoute
+  '/matematicas': typeof MatematicasRouteWithChildren
   '/progreso': typeof ProgresoRoute
   '/repaso': typeof RepasoRoute
   '/biologia/tema-2': typeof BiologiaTema2Route
+  '/matematicas/radicales': typeof MatematicasRadicalesRouteWithChildren
   '/mision/$id': typeof MisionIdRoute
   '/biologia/': typeof BiologiaIndexRoute
+  '/matematicas/': typeof MatematicasIndexRoute
+  '/matematicas/radicales/$apartado': typeof MatematicasRadicalesApartadoRoute
+  '/matematicas/radicales/': typeof MatematicasRadicalesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -128,20 +164,26 @@ export interface FileRouteTypes {
     | '/progreso'
     | '/repaso'
     | '/biologia/tema-2'
+    | '/matematicas/radicales'
     | '/mision/$id'
     | '/biologia/'
+    | '/matematicas/'
+    | '/matematicas/radicales/$apartado'
+    | '/matematicas/radicales/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/aula'
     | '/auth'
     | '/fisica-quimica'
-    | '/matematicas'
     | '/progreso'
     | '/repaso'
     | '/biologia/tema-2'
     | '/mision/$id'
     | '/biologia'
+    | '/matematicas'
+    | '/matematicas/radicales/$apartado'
+    | '/matematicas/radicales'
   id:
     | '__root__'
     | '/'
@@ -153,8 +195,12 @@ export interface FileRouteTypes {
     | '/progreso'
     | '/repaso'
     | '/biologia/tema-2'
+    | '/matematicas/radicales'
     | '/mision/$id'
     | '/biologia/'
+    | '/matematicas/'
+    | '/matematicas/radicales/$apartado'
+    | '/matematicas/radicales/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -163,7 +209,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   BiologiaRoute: typeof BiologiaRouteWithChildren
   FisicaQuimicaRoute: typeof FisicaQuimicaRoute
-  MatematicasRoute: typeof MatematicasRoute
+  MatematicasRoute: typeof MatematicasRouteWithChildren
   ProgresoRoute: typeof ProgresoRoute
   RepasoRoute: typeof RepasoRoute
   MisionIdRoute: typeof MisionIdRoute
@@ -241,12 +287,40 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BiologiaTema2RouteImport
       parentRoute: typeof BiologiaRoute
     }
+    '/matematicas/': {
+      id: '/matematicas/'
+      path: '/'
+      fullPath: '/matematicas/'
+      preLoaderRoute: typeof MatematicasIndexRouteImport
+      parentRoute: typeof MatematicasRoute
+    }
+    '/matematicas/radicales': {
+      id: '/matematicas/radicales'
+      path: '/radicales'
+      fullPath: '/matematicas/radicales'
+      preLoaderRoute: typeof MatematicasRadicalesRouteImport
+      parentRoute: typeof MatematicasRoute
+    }
     '/mision/$id': {
       id: '/mision/$id'
       path: '/mision/$id'
       fullPath: '/mision/$id'
       preLoaderRoute: typeof MisionIdRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/matematicas/radicales/': {
+      id: '/matematicas/radicales/'
+      path: '/'
+      fullPath: '/matematicas/radicales/'
+      preLoaderRoute: typeof MatematicasRadicalesIndexRouteImport
+      parentRoute: typeof MatematicasRadicalesRoute
+    }
+    '/matematicas/radicales/$apartado': {
+      id: '/matematicas/radicales/$apartado'
+      path: '/$apartado'
+      fullPath: '/matematicas/radicales/$apartado'
+      preLoaderRoute: typeof MatematicasRadicalesApartadoRouteImport
+      parentRoute: typeof MatematicasRadicalesRoute
     }
   }
 }
@@ -265,13 +339,40 @@ const BiologiaRouteWithChildren = BiologiaRoute._addFileChildren(
   BiologiaRouteChildren,
 )
 
+interface MatematicasRadicalesRouteChildren {
+  MatematicasRadicalesApartadoRoute: typeof MatematicasRadicalesApartadoRoute
+  MatematicasRadicalesIndexRoute: typeof MatematicasRadicalesIndexRoute
+}
+
+const MatematicasRadicalesRouteChildren: MatematicasRadicalesRouteChildren = {
+  MatematicasRadicalesApartadoRoute: MatematicasRadicalesApartadoRoute,
+  MatematicasRadicalesIndexRoute: MatematicasRadicalesIndexRoute,
+}
+
+const MatematicasRadicalesRouteWithChildren =
+  MatematicasRadicalesRoute._addFileChildren(MatematicasRadicalesRouteChildren)
+
+interface MatematicasRouteChildren {
+  MatematicasRadicalesRoute: typeof MatematicasRadicalesRouteWithChildren
+  MatematicasIndexRoute: typeof MatematicasIndexRoute
+}
+
+const MatematicasRouteChildren: MatematicasRouteChildren = {
+  MatematicasRadicalesRoute: MatematicasRadicalesRouteWithChildren,
+  MatematicasIndexRoute: MatematicasIndexRoute,
+}
+
+const MatematicasRouteWithChildren = MatematicasRoute._addFileChildren(
+  MatematicasRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AulaRoute: AulaRoute,
   AuthRoute: AuthRoute,
   BiologiaRoute: BiologiaRouteWithChildren,
   FisicaQuimicaRoute: FisicaQuimicaRoute,
-  MatematicasRoute: MatematicasRoute,
+  MatematicasRoute: MatematicasRouteWithChildren,
   ProgresoRoute: ProgresoRoute,
   RepasoRoute: RepasoRoute,
   MisionIdRoute: MisionIdRoute,

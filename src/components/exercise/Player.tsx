@@ -9,6 +9,7 @@ import { gradeExercise, isAnswerComplete, type GradeResult } from "@/lib/grading
 import { exerciseStatus, medalFor, POINTS_FIRST_TRY, POINTS_LATER, progressStore } from "@/lib/progress";
 import { cn } from "@/lib/utils";
 import { theoryForExercise } from "@/lib/content/theory";
+import type { TheorySection } from "@/lib/content/theory";
 import { ExerciseBody, initialAnswer } from "./ExerciseBody";
 
 type SessionResult = "first" | "later" | "failed";
@@ -20,6 +21,8 @@ export function Player({
   onRestart,
   restartLabel = "Repetir misión",
   showReviewLink = true,
+  returnTo = "/biologia/tema-2",
+  theory,
 }: {
   exercises: Exercise[];
   title: string;
@@ -27,6 +30,8 @@ export function Player({
   onRestart?: () => void;
   restartLabel?: string;
   showReviewLink?: boolean;
+  returnTo?: "/biologia/tema-2" | "/matematicas/radicales";
+  theory?: TheorySection[];
 }) {
   const [index, setIndex] = useState(0);
   const [answer, setAnswer] = useState<Answer>(() => (exercises[0] ? initialAnswer(exercises[0]) : null));
@@ -123,7 +128,7 @@ export function Player({
             </Button>
           )}
           <Button asChild variant="pop" size="xl">
-            <Link to="/biologia/tema-2">
+            <Link to={returnTo}>
               Volver al mapa <ArrowRight />
             </Link>
           </Button>
@@ -231,7 +236,7 @@ export function Player({
             </Button>
             {hint && (
               <div className="animate-pop-in mt-3 space-y-4 rounded-xl border-2 border-ink bg-gold/15 p-4">
-                {theoryForExercise(ex.id).map((sec) => (
+                {(theory ?? theoryForExercise(ex.id)).map((sec) => (
                   <div key={sec.title}>
                     <p className="mb-1.5 flex items-center gap-2 font-display font-bold">
                       <BookOpen className="size-4" /> Teoría: {sec.title}

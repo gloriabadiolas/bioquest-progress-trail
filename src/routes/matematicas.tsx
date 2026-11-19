@@ -1,5 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { EmptySubject } from "@/components/EmptySubject";
+import { createFileRoute, Outlet } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/matematicas")({
   head: () => ({ meta: [
@@ -10,5 +9,5 @@ export const Route = createFileRoute("/matematicas")({
     { property: "og:type", content: "website" },
     { name: "twitter:card", content: "summary" },
   ] }),
-  component: () => <EmptySubject title="Matemáticas" />,
+  component: Outlet,
 });

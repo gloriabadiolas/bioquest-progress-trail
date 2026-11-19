@@ -27,7 +27,7 @@ function Home() {
           <div className="flex h-40 items-center justify-center border-b-2 border-ink bg-secondary"><Calculator className="size-20" strokeWidth={1.5} /></div>
           <div className="flex flex-1 flex-col items-start gap-4 p-5">
             <h2 className="text-2xl font-extrabold">Matemáticas</h2>
-            <p className="text-sm text-muted-foreground">Sin temas todavía</p>
+            <p className="text-sm text-muted-foreground">1 tema · Radicales</p>
             <Button asChild variant="popPaper" className="mt-auto"><Link to="/matematicas">Ver temas <ArrowRight /></Link></Button>
           </div>
         </article>
